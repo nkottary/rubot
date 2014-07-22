@@ -1,0 +1,12 @@
+-- add menu
+	-- quit in pause takes to menu.
+	-- start game.
+	-- change controls.
+	-- quit.
+-- add sound.
+-- add levels.
+-- add powerups.
+-- add kill enemy by pouncing and health.
+-- add shoot ability.
+-- add graphics objects like trees and buildings.
+-- fix collision detection bug.
