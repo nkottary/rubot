@@ -3,7 +3,7 @@ require_relative 'Creature'
 
 # Player class.
 class CptnRuby < Creature
-  attr_reader :score
+  attr_accessor :score
 
   @@jump_vel = 20
   @@move_vel = 5
@@ -47,10 +47,8 @@ class CptnRuby < Creature
 
   def leftRightMove
      # Directional walking, horizontal movement
-    if @dir == :right then
-      @@move_vel.times { if would_fit(1, 0) then @x += 1 end }
-    else 
-      @@move_vel.times { if would_fit(-1, 0) then @x -= 1 end }
+    if @dir == :right and would_fit(@@move_vel, 0) then @x += @@move_vel
+    elsif @dir == :left and would_fit(-@@move_vel, 0) then @x -= @@move_vel
     end
   end
 
@@ -63,36 +61,30 @@ class CptnRuby < Creature
         return
       end
 
-      (-@vy).times { if would_fit(0, -1) then 
-        @y -= 1 
-      else 
+      if lineTouchUp?(@vy) 
         @vy = 0 
         @jump_state = :down
         return
-      end }
+      end
 
-      @vy += 1
+      @vy -= 1
 
     elsif @jump_state == :down then
 
-      @vy.times { if would_fit(0, 1) then 
-        @y += 1 
-      else 
+      if lineTouchDown?(@vy)
         @vy = 0
         @jump_state = :onground 
         return
-      end }
+      end
 
       @vy += 1
 
-    else
-      if would_fit(0, 1) then
-        @jump_state = :down
-      end
+    elsif @jump_state == :onground and not brickTouchDown?(@x, @y + 1) then @jump_state = :down
     end
   end
 
   def update()
+
     if @move_state == :moving then
       leftRightMove
     end
@@ -105,7 +97,7 @@ class CptnRuby < Creature
   def jump
     if @jump_state == :onground then
       @jump_state = :up
-      @vy = -@@jump_vel
+      @vy = @@jump_vel
     end
   end
 
@@ -128,17 +120,5 @@ class CptnRuby < Creature
 
   def stop
     @move_state = :standing
-  end
-  
-  def collect_gems(gems)
-    # Same as in the tutorial game.
-    gems.reject! do |item|
-      if (item.x - @x).abs < 50 and (item.y - @y).abs < 50 then
-        @score += 1
-        true
-      else
-        false
-      end
-    end
   end
 end

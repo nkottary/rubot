@@ -28,7 +28,6 @@
 require 'rubygems'
 require 'gosu'
 require_relative 'helpers'
-require_relative 'Diamond'
 require_relative 'Bot'
 require_relative 'NoFallBot'
 require_relative 'ParallaxBackground'
@@ -36,6 +35,8 @@ require_relative 'Map'
 require_relative 'CptnRuby'
 require_relative 'fonts'
 require_relative 'PauseHandler'
+require_relative 'Fireball'
+require_relative 'PlayerDiamondCollider'
 
 include Gosu
 
@@ -60,6 +61,11 @@ class Game < Window
 
     @bot = NoFallBot.new(self, 400, 100)#1474, 999)
 
+    Fireball::init self
+    Diamond::init self
+
+    @playerDiamondCollider = PlayerDiamondCollider.new @cptn
+
     @gameState = :playing
   end
 
@@ -67,16 +73,20 @@ class Game < Window
 
     if @gameState == :playing then
       @bot.update
-      @map.gems.each {|g| g.update}
 
       @cptn.update
-      @cptn.collect_gems(@map.gems)
+      @playerDiamondCollider.update
+      #@cptn.collect_gems(Diamond::getDiamondList)
 
       # Scrolling follows player
       @camera_x = [[@cptn.x - 320, 0].max, @map.width * 50 - 640].min
       @camera_y = [[@cptn.y - 240, 0].max, @map.height * 50 - 480].min
 
       @parallax_bg.update @camera_x, @camera_y
+
+      Fireball::update
+      Diamond::update
+
     elsif @gameState == :paused then
       @pauseHandler.update
     end
@@ -90,6 +100,8 @@ class Game < Window
       @map.draw
       @cptn.draw
       @bot.draw
+      Fireball::draw
+      Diamond::draw
     end
 
     @fonts.smallFont.draw("Score: #{@cptn.score}", 10, 10, ZOrder::UI, 1.0, 1.0, 0xff990000)
@@ -131,8 +143,8 @@ class Game < Window
       elsif id == KbRight then @cptn.move_right
       elsif id == KbLeft then @cptn.move_left
       elsif id == KbUp then @cptn.jump 
+      elsif id == KbSpace then Fireball::spawn @cptn.x, @cptn.y, @cptn.dir
       end
-
     end
   end
 end

@@ -1,4 +1,6 @@
 require_relative 'helpers'
+require_relative 'Diamond'
+
 # Map class holds and draws tiles and gems.
 class Map
   attr_reader :width, :height, :gems
@@ -6,9 +8,6 @@ class Map
   def initialize(window, filename)
     # Load 60x60 tiles, 5px overlap in all four directions.
     @tileset = Image.load_tiles(window, "media/CptnRuby Tileset.png", 60, 60, true)
-
-    gem_img = Image.new(window, "media/CptnRuby Gem.png", false)
-    @gems = []
 
     lines = File.readlines(filename).map { |line| line.chomp }
     @height = lines.size
@@ -21,7 +20,7 @@ class Map
         when '#'
           Tiles::Earth
         when 'x'
-          @gems.push(Diamond.new(gem_img, x * 50 + 25, y * 50 + 25))
+          Diamond::spawn(x * 50 + 25, y * 50 + 25)
           nil
         else
           nil
@@ -43,7 +42,6 @@ class Map
         end
       end
     end
-    @gems.each { |c| c.draw }
   end
   
   # Solid at a given pixel position?

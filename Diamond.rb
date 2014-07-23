@@ -1,20 +1,45 @@
 require_relative 'helpers'
 
-class Diamond
-  attr_reader :x, :y
+class Diamond < Collidable
 
-  def initialize(image, x, y)
-    @image = image
-    @x, @y = x, y
+  @@diamondList = []
+  @@image = nil
+
+  def self.init(window)
+    @@image = Image.new(window, 'media/gem.png', false)
+  end
+
+  def self.spawn(x, y)
+    @@diamondList << Diamond.new(x, y)
+  end
+
+  def self.getDiamondList
+    @@diamondList
+  end
+
+  def self.update
+    @@diamondList.each do |diamond|
+      diamond.update
+    end
+  end
+
+  def self.draw
+    @@diamondList.each do |diamond|
+      diamond.draw
+    end
+  end
+
+  def initialize(x, y)
+    super x, y, 50, 50, nil, nil
     @angle = 0
   end
 
   def update
-  	@angle = 25 * Math.sin(milliseconds / 133.7)
+    @angle = 25 * Math.sin(milliseconds / 133.7)
   end
-  
+
   def draw
     # Draw, slowly rotating
-    @image.draw_rot(@x, @y, ZOrder::Diamond, @angle)
+    @@image.draw_rot(@x, @y, ZOrder::Diamond, @angle)
   end
 end
