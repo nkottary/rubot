@@ -4,8 +4,11 @@
 	-- change controls.
 	-- quit.
 -- add sound.
+	-- looped background music.
 -- add levels.
 -- add powerups.
 -- add kill enemy by pouncing and health.
--- add shoot ability.
 -- add graphics objects like trees and buildings.
+
+-- difference between require and include.
+-- game pad support

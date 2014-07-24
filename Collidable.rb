@@ -38,35 +38,25 @@ class Collidable
 		@map.solid?(newx + @width / 2, newy) \
 				or 
 			@map.solid?(newx + @width / 2, newy + @height)
+	end
+
+	# define the line touch methods.
+	[["Up", 0, -1], ["Down", 0, 1], ["Left", -1, 0], ["Right", 1, 0]].each do |dir, off_x, off_y|
+		define_method("lineTouch#{dir}?") do |dist|
+
+			chk_func = method("brickTouch#{dir}?")
+			dist.times do
+				if chk_func.call(@x + off_x, @y + off_y) 
+					return true 
+				else 
+					@x += off_x
+					@y += off_y  
+				end
+			end
+			false
+
+		end
 	end  
-
-	def lineTouchUp?(dist)
-		dist.times do
-			if brickTouchUp?(@x, @y - 1) then return true else @y -= 1 end
-		end
-		false
-	end
-
-	def lineTouchDown?(dist)
-		dist.times do
-			if brickTouchDown?(@x, @y + 1) then return true else @y += 1 end
-		end
-		false
-	end
-
-	def lineTouchLeft?(dist)
-		dist.times do
-			if brickTouchLeft?(@x - 1, @y) then return true else @x -= 1 end
-		end
-		false
-	end
-
-	def lineTouchRight?(dist)
-		dist.times do
-			if brickTouchRight?(@x + 1, @y) then return true else @x += 1 end
-		end
-		false
-	end
 
 	def draw
 	    # Flip vertically when facing to the left.

@@ -1,29 +1,6 @@
-# Basically, the tutorial game taken to a jump'n'run perspective.
 
-# Shows how to
-#  * implement jumping/gravity
-#  * implement scrolling using Window#translate
-#  * implement a simple tile-based map
-#  * load levels from primitive text files
-
-# Some exercises, starting at the real basics:
-#  0) understand the existing code!
-# As shown in the tutorial:
-#  1) change it use Gosu's Z-ordering---- done
-#  2) add gamepad support
-#  3) add a score as in the tutorial game ---- done
-#  4) similarly, add sound effects for various events
-# Exploring this game's code and Gosu:
-#  5) make the player wider, so he doesn't fall off edges as easily
-#  6) add background music (check if playing in Window#update to implement 
-#     looping)
-#  7) implement parallax scrolling for the star background! --- done
-# Getting tricky:
 #  8) optimize Map#draw so only tiles on screen are drawn (needs modulo, a pen
 #     and paper to figure out)
-#  9) add loading of next level when all gems are collected
-# ...Enemies, a more sophisticated object system, weapons, title and credits
-# screens...
 
 require 'rubygems'
 require 'gosu'
