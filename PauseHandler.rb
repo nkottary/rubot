@@ -4,9 +4,7 @@ class PauseHandler
 
 	attr_reader :selectedOption
 
-	def initialize(window, fonts)
-		@fonts = fonts
-
+	def initialize(window)
 		@quitX, @quitY = 200, 150
 		@yesX, @yesY = @quitX, @quitY + 100
 		@noX, @noY = @quitX + 190, @yesY
@@ -38,9 +36,9 @@ class PauseHandler
 	end
 
 	def draw
-		@fonts.bigFont.draw("Quit?", @quitX, @quitY, ZOrder::UI, 1.0, 1.0, @color)
-      	@fonts.mediumFont.draw("Yes", @yesX, @yesY, ZOrder::UI, 1.0, 1.0, @color)
-      	@fonts.mediumFont.draw("No", @noX, @noY, ZOrder::UI, 1.0, 1.0, @color)
+		Fonts::bigFont.draw("Quit?", @quitX, @quitY, ZOrder::UI, 1.0, 1.0, @color)
+      	Fonts::mediumFont.draw("Yes", @yesX, @yesY, ZOrder::UI, 1.0, 1.0, @color)
+      	Fonts::mediumFont.draw("No", @noX, @noY, ZOrder::UI, 1.0, 1.0, @color)
       	@arrow.draw
 	end
 end

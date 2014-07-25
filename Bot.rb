@@ -4,8 +4,8 @@ require_relative 'Creature'
 #A bot that ossilates between bricks.
 class Bot < Creature
 
-  def initialize(window, x, y)
-    super window, x, y
+  def initialize(window, map, x, y)
+    super
 
     #@imgs_idle = []
     @imgs_run = []

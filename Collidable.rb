@@ -79,17 +79,17 @@ class Collidable
 
 		if @x + @width > obj.x and @y + @height > obj.y and @x < obj.x + obj.width and @y < obj.y + obj.height then
 
-			if @y < obj.y then
-				off_y = @y + @height - obj.y
-			else 
-				off_y = @y - obj.y - obj.height
-			end
-
-			if @x < obj.x then
-				off_x = @x + @width - obj.x
-			else 
-				off_x = @x - obj.x - obj.width
-			end
+			off_x = if @x < obj.x then
+						@x + @width - obj.x
+					else 
+						@x - obj.x - obj.width
+					end
+					
+			off_y = if @y < obj.y then
+						@y + @height - obj.y
+					else 
+						@y - obj.y - obj.height
+					end
 		end
 
 		return off_x, off_y

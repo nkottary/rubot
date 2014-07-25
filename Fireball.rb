@@ -11,8 +11,8 @@ class Fireball < Collidable
 
 	@@fireballList = []
 
-	def self.init(window)
-		@@map = window.map
+	def self.init(window, map)
+		@@map = map
 		@@image = Image.new(window, 'media/fireball.png', false)
 	end
 

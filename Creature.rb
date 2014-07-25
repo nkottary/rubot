@@ -8,10 +8,10 @@ class Creature < Collidable
 
   attr_reader :x, :y
 
-  def initialize(window, x, y)
+  def initialize(window, map, x, y)
     # This always points to the frame that is currently drawn.
     # This is set in update, and used in draw.
-    super x, y, 50, 50, window.map, :right # width and height 50 50
+    super x, y, 50, 50, map, :right # width and height 50 50
     @vy = 0
   end
 
