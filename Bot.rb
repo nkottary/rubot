@@ -4,32 +4,40 @@ require_relative 'Creature'
 #A bot that ossilates between bricks.
 class Bot < Creature
 
-  def initialize(window, map, x, y)
-    super
+  @@botList = []
+  @@imgs_run = []
+  @@width = 80
+  @@height = 80
 
-    #@imgs_idle = []
-    @imgs_run = []
-"""
-    4.times do |i|
-      str = 'media/orc/idle/idle00' + (i + 1).to_s + '.png'
-      @imgs_idle << Image.new(window, str, false)
-    end
-"""
+  def self.init(window)
     8.times do |i|
       str = 'media/orc/run/run00' + (i + 1).to_s + '.png'
-      @imgs_run << Image.new(window, str, false)
+      @@imgs_run << Image.new(window, str, false)
     end
+  end
 
-    @width = 80
-    @height = 80
+  def self.reset
+    @@botList = []
+  end
+
+  def self.spawn(x, y)
+    @@botList << Bot.new(x, y)
+  end
+
+  def self.update
+    @@botList.each do |bot|
+      bot.update
+    end
+  end
+
+  def self.draw
+    @@botList.each do |bot|
+      bot.draw
+    end
   end
 
   def update
-    @cur_image = @imgs_run[milliseconds / 100 % 8]
-    '''
-    if (@vy < 0)
-      @cur_image = @jump
-    end'''
+    @cur_image = @@imgs_run[milliseconds / 100 % 8]
     
     # Directional walking, horizontal movement
     if @dir == :right then

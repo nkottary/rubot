@@ -4,6 +4,7 @@
 
 require 'gosu'
 require_relative 'helpers'
+require_relative 'Collidable'
 require_relative 'Bot'
 require_relative 'NoFallBot'
 require_relative 'ParallaxBackground'
@@ -22,17 +23,26 @@ class GameWindow < Window
 
     def initialize
         super(640, 480, false)
+        @levelMaps = ["media/level1.txt", "media/level2.txt", "media/level3.txt", "media/level4.txt"]
         self.caption = "Rubot"
-        @game = Game.new self
         Fonts::init self
         @menu = Menu.new(self, "media/menu-bg.jpg", "Rubot", 
             ["Start game", "High scores", "Change controls", "Quit"])
+        @lastLevel = 4
+        @currentLevel = 0
         @windowState = :menu
+        @game = Game.new self, @levelMaps[0]
     end
 
     def startNewGame
-        @game = Game.new self
+        @currentLevel = 0
         @windowState = :game
+        startLevel
+    end
+
+    def startLevel
+        p @currentLevel
+        @game.reset @levelMaps[@currentLevel]
     end
 
     def update
@@ -41,6 +51,10 @@ class GameWindow < Window
         elsif @windowState == :game then
             @game.update
             @windowState = :menu if @game.userQuit?
+            if Diamond::allGemsCollected?
+                @currentLevel += 1 if @currentLevel < @lastLevel
+                startLevel
+            end
         end
     end
 

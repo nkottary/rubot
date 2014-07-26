@@ -4,25 +4,35 @@ require_relative 'Diamond'
 # Map class holds and draws tiles and gems.
 class Map
   attr_reader :width, :height, :gems
-  
-  def initialize(window, filename)
+
+  def self.init(window)
+    @@tileset = Image.load_tiles(window, "media/CptnRuby Tileset.png", 60, 60, true)
+  end
+
+
+  def initialize(filename)
     # Load 60x60 tiles, 5px overlap in all four directions.
-    @tileset = Image.load_tiles(window, "media/CptnRuby Tileset.png", 60, 60, true)
 
     lines = File.readlines(filename).map { |line| line.chomp }
     @height = lines.size
     @width = lines[0].size
     @tiles = Array.new(@width) do |x|
+      xpos = x * 50 + 25
       Array.new(@height) do |y|
+        ypos = y * 50 + 25
         case lines[y][x, 1]
         when '"'
           Tiles::Grass
         when '#'
           Tiles::Earth
         when 'x'
-          Diamond::spawn(x * 50 + 25, y * 50 + 25)
+          Diamond::spawn xpos, ypos
           nil
-        else
+        when 'p'
+          Player::position xpos, ypos
+          nil
+        when 'b'
+          Bot::spawn xpos, ypos
           nil
         end
       end
@@ -38,7 +48,7 @@ class Map
         if tile
           # Draw the tile with an offset (tile images have some overlap)
           # Scrolling is implemented here just as in the game objects.
-          @tileset[tile].draw(x * 50 - 5, y * 50 - 5, ZOrder::Map)
+          @@tileset[tile].draw(x * 50 - 5, y * 50 - 5, ZOrder::Map)
         end
       end
     end

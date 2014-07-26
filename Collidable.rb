@@ -2,42 +2,47 @@ class Collidable
 
 	attr_reader :x, :y, :width, :height, :dir
 
-	def initialize(x, y, width, height, map, dir)
+	@@map = nil
+
+	def self.setMap(map)
+		@@map = map
+	end
+
+	def initialize(x, y, width, height, dir)
 		@x = x
 		@y = y
 		@width = width
 		@height = height
-		@map = map
 		@dir = dir
 		@cur_image = nil
 	end
 
 	def brickTouchUp?(newx, newy)
 
-   		@map.solid?(newx - @width / 2, newy - @height / 2) \
+   		@@map.solid?(newx - @width / 2, newy - @height / 2) \
    				or 
-   			@map.solid?(newx + @width / 2, newy - @height / 2)
+   			@@map.solid?(newx + @width / 2, newy - @height / 2)
   	end
 
 	def brickTouchDown?(newx, newy)
 
-		@map.solid?(newx - @width / 2, newy) \
+		@@map.solid?(newx - @width / 2, newy) \
 				or 
-			@map.solid?(newx + @width / 2, newy)
+			@@map.solid?(newx + @width / 2, newy)
 	end
 
 	def brickTouchLeft?(newx, newy)
 
-		@map.solid?(newx - @width / 2, newy) \
+		@@map.solid?(newx - @width / 2, newy) \
 				or 
-			@map.solid?(newx - @width / 2, newy + @height)
+			@@map.solid?(newx - @width / 2, newy + @height)
 	end
 
 	def brickTouchRight?(newx, newy)
 
-		@map.solid?(newx + @width / 2, newy) \
+		@@map.solid?(newx + @width / 2, newy) \
 				or 
-			@map.solid?(newx + @width / 2, newy + @height)
+			@@map.solid?(newx + @width / 2, newy + @height)
 	end
 
 	# define the line touch methods.

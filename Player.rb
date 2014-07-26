@@ -8,15 +8,22 @@ class Player < Creature
   @@jump_vel = 20
   @@move_vel = 5
 
-  def initialize(window, map, x, y)
-    super
+  def self.position(x, y)
+    @@start_x, @@start_y = x, y
+  end
+
+  def self.init(window)
     imgs = Image.load_tiles(window, "media/hero.png", 64, 64, false)
 
-    @stand_image = imgs[0]
-    @img_run = [imgs[2], imgs[3], imgs[2], imgs[1]]
-    @going_up_image = imgs[10]
-    @going_down_image = imgs[11]
-    @jump_n_move = imgs[5]
+    @@stand_image = imgs[0]
+    @@img_run = [imgs[2], imgs[3], imgs[2], imgs[1]]
+    @@going_up_image = imgs[10]
+    @@going_down_image = imgs[11]
+    @@jump_n_move = imgs[5]
+  end
+
+  def initialize
+    super @@start_x, @@start_y
 
     @score = 0
     @height = 64
@@ -31,17 +38,17 @@ class Player < Creature
     if @move_state == :standing then
 
       if @jump_state == :onground
-        @cur_image = @stand_image
+        @cur_image = @@stand_image
       elsif @jump_state == :down
-        @cur_image = @going_down_image
+        @cur_image = @@going_down_image
       elsif @jump_state == :up
-        @cur_image = @going_up_image
+        @cur_image = @@going_up_image
       end
 
     elsif @jump_state == :onground then
-      @cur_image = @img_run[milliseconds / 175 % @img_run.size]  
+      @cur_image = @@img_run[milliseconds / 175 % @@img_run.size]  
     else
-      @cur_image = @jump_n_move
+      @cur_image = @@jump_n_move
     end
   end
 

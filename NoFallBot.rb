@@ -4,7 +4,7 @@ require_relative 'helpers'
 class NoFallBot < Bot
   def update
     super
-    if @vy == 0 and not @map.solid?(@x, @y + 1) then
+    if @vy == 0 and not @@map.solid?(@x, @y + 1) then
       reverse
     end
   end

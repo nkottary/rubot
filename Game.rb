@@ -1,29 +1,44 @@
 class Game
 
-	def initialize(window)
+	def initialize(window, mapFile)
         @window = window
-		@map = Map.new(window, "media/CptnRuby Map.txt")
+        Map::init window
+		@map = Map.new(mapFile)
+        Collidable::setMap(@map)
 		@parallax_bg = ParallaxBackground.new(window, "media/sky_bg.png", (@map.width + 15) * 50, (@map.height + 10) * 50)
-		@player = Player.new(window, @map, 400, 100)
+
+        Player::init window
+		@player = Player.new
 
 		 # The scrolling position is stored as top left corner of the screen.
     	@camera_x = @camera_y = 0
 
     	@pauseHandler = PauseHandler.new(window)
-    	@bot = NoFallBot.new(window, @map, 400, 100)
-    	Fireball::init window, @map
+        Bot::init window
+    	Fireball::init window
     	Diamond::init window
     	@playerDiamondCollider = PlayerDiamondCollider.new @player
     	@gameState = :playing
     	@gameQuit = false
 	end
 
+    def reset(mapFile)
+        Bot::reset
+        Fireball::reset
+        Diamond::reset
+        
+        @map = Map.new(mapFile)
+        Collidable::setMap(@map)
+        @player = Player.new
+        @playerDiamondCollider = PlayerDiamondCollider.new @player
+    end
+
 	def draw
 		@parallax_bg.draw
         @window.translate(-@camera_x, -@camera_y) do
           	@map.draw
           	@player.draw
-          	@bot.draw
+          	Bot::draw
           	Fireball::draw
           	Diamond::draw
         end
@@ -33,7 +48,7 @@ class Game
 
 	def update
 		if @gameState == :playing then
-	        @bot.update
+	        Bot::update
 	        @player.update
 	        @playerDiamondCollider.update
 

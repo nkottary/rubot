@@ -9,6 +9,10 @@ class Diamond < Collidable
     @@image = Image.new(window, 'media/gem.png', false)
   end
 
+  def self.reset
+    @@diamondList = []
+  end
+
   def self.spawn(x, y)
     @@diamondList << Diamond.new(x, y)
   end
@@ -29,8 +33,12 @@ class Diamond < Collidable
     end
   end
 
+  def self.allGemsCollected?
+    @@diamondList.empty?
+  end
+
   def initialize(x, y)
-    super x, y, 50, 50, nil, nil
+    super x, y, 50, 50, nil
     @angle = 0
   end
 

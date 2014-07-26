@@ -1,19 +1,19 @@
-require_relative 'Collidable'
-
 class Fireball < Collidable
 
 	attr_reader :is_alive
 
 	VEL_X = 10
 	VEL_Y = 10
-	@@map = nil
 	@@image = nil
 
 	@@fireballList = []
 
-	def self.init(window, map)
-		@@map = map
+	def self.init(window)
 		@@image = Image.new(window, 'media/fireball.png', false)
+	end
+
+	def self.reset
+		@@fireballList = []
 	end
 
 	def self.spawn(x, y, dir)
