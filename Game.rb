@@ -1,105 +1,66 @@
+require_relative "ParallaxBackground"
+require_relative "ScrollingCamera"
+require_relative "BotHandler"
+require_relative "FireballHandler"
+require_relative "DiamondHandler"
+require_relative "PlayerDiamondCollider"
+require_relative "ScoreBoard"
+require_relative "PlayerHandler"
+require_relative "Map"
+
 class Game
+    class << self
+    	def initialize(mapFile)
+            ScrollingCamera::initialize
+            BotHandler::initialize
+        	FireballHandler::initialize
+        	DiamondHandler::initialize
+            ScoreBoard::initialize
 
-	def initialize(window, mapFile)
-        @window = window
-        Map::init window
-		@map = Map.new(mapFile)
-        Collidable::setMap(@map)
-		@parallax_bg = ParallaxBackground.new(window, "media/sky_bg.png", (@map.width + 15) * 50, (@map.height + 10) * 50)
+            Map::initialize mapFile
+            PlayerDiamondCollider::initialize
+            ParallaxBackground::initialize
+    	end
 
-        Player::init window
-		@player = Player.new
+    	def draw
+    		ParallaxBackground::draw
 
-		 # The scrolling position is stored as top left corner of the screen.
-    	@camera_x = @camera_y = 0
+            ScrollingCamera::translateAndDraw do 
+                Map::draw
+                PlayerHandler::draw
+                BotHandler::draw
+                FireballHandler::draw
+                DiamondHandler::draw
+            end
 
-    	@pauseHandler = PauseHandler.new(window)
-        Bot::init window
-    	Fireball::init window
-    	Diamond::init window
-    	@playerDiamondCollider = PlayerDiamondCollider.new @player
-    	@gameState = :playing
-    	@gameQuit = false
-	end
+            ScoreBoard::draw
+    	end
 
-    def reset(mapFile)
-        Bot::reset
-        Fireball::reset
-        Diamond::reset
-        
-        @map = Map.new(mapFile)
-        Collidable::setMap(@map)
-        @player = Player.new
-        @playerDiamondCollider = PlayerDiamondCollider.new @player
-    end
+    	def update
+            ParallaxBackground::update
+            ScrollingCamera::update
+            PlayerHandler::update
+            BotHandler::update
+            FireballHandler::update
+            DiamondHandler::update
 
-	def draw
-		@parallax_bg.draw
-        @window.translate(-@camera_x, -@camera_y) do
-          	@map.draw
-          	@player.draw
-          	Bot::draw
-          	Fireball::draw
-          	Diamond::draw
+            PlayerDiamondCollider::update
+    	end
+
+    	def button_up(id)
+            PlayerHandler::button_up id
         end
-        Fonts::smallFont.draw("Score: #{@player.score}", 10, 10, ZOrder::UI, 1.0, 1.0, 0xff990000)
-        @pauseHandler.draw if @gameState == :paused
-	end
 
-	def update
-		if @gameState == :playing then
-	        Bot::update
-	        @player.update
-	        @playerDiamondCollider.update
-
-	        # Scrolling follows player
-	        @camera_x = [[@player.x - 320, 0].max, @map.width * 50 - 640].min
-	        @camera_y = [[@player.y - 240, 0].max, @map.height * 50 - 480].min
-
-	        @parallax_bg.update @camera_x, @camera_y
-	        Fireball::update
-	        Diamond::update
-	    elsif @gameState == :paused then
-	        @pauseHandler.update
-	    end
-	end
-
-	def button_up(id)
-        if @gameState == :playing then
-            if id == KbLeft or id == KbRight then
-                @player.stop
-            elsif id == KbUp then
-                @player.stop_jump
+        def button_down(id)
+            if id == Gosu::KbSpace
+                FireballHandler::spawn PlayerHandler::playerObj.x, PlayerHandler::playerObj.y, PlayerHandler::playerObj.dir
+            else
+                PlayerHandler::button_down id
             end
         end
-    end
 
-    def button_down(id)
-    	if @gameState == :paused 
-            if id == KbEscape then @gameState = :playing
-            elsif id == KbRight or id == KbLeft then @pauseHandler.toggle
-            elsif id == KbReturn then doPauseAction 
-            end
-        elsif @gameState == :playing
-	    	if id == KbEscape then @gameState = :paused
-	        elsif id == KbRight then @player.move_right
-	        elsif id == KbLeft then @player.move_left
-	        elsif id == KbUp then @player.jump 
-	        elsif id == KbSpace then Fireball::spawn @player.x, @player.y, @player.dir
-	        end
-	    end
-    end
-
-    def doPauseAction
-        option = @pauseHandler.getSelection
-        if option == :yes
-        	@gameQuit = true
-        elsif option == :no 
-        	@gameState = :playing 
+        def isWon?
+            DiamondHandler::allGemsCollected?
         end
-    end
-
-    def userQuit?
-    	@gameQuit
     end
 end

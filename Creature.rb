@@ -1,29 +1,32 @@
-require_relative 'helpers'
-require_relative 'Collidable'
-
+require_relative "Collidable"
 #Super class for player and all bots.
 class Creature < Collidable
+    attr_reader :x, :y
 
-  @@vel_x = 2
+    def initialize(x, y, width, height)
+        super x, y, width, height, :right # width and height 50 50
 
-  attr_reader :x, :y
+        @curr_yvel = 0
+        @vert_state = :standing
+    end
 
-  def initialize(x, y)
-    # This always points to the frame that is currently drawn.
-    # This is set in update, and used in draw.
-    super x, y, 50, 50, :right # width and height 50 50
-    @vy = 0
-  end
+    protected
+    def reverse
+        @dir = @dir == :right ? :left : :right
+    end
 
-  def reverse
-    @dir = @dir == :right ? :left : :right
-  end
+    protected
+    def handleStanding
+        if not broadTouchDown?(@x, @y + 1) then @vert_state = :falling end
+    end
 
-  # Could the object be placed at x + offs_x/y + offs_y without being stuck?
-  def would_fit(offs_x, offs_y)
-    # Check at the center/top and center/bottom for map collisions
-    not @@map.solid?(@x + offs_x + (@width / 2), @y + offs_y) and 
-      not @@map.solid?(@x + offs_x - (@width / 2), @y + offs_y) and
-      not @@map.solid?(@x + offs_x, @y + offs_y - @height + 5)
-  end
+    protected
+    def handleFalling
+        if broadLineTouchDown?(@curr_yvel)
+            @curr_yvel = 0
+            @vert_state = :standing
+        else
+            @curr_yvel += 1
+        end
+    end
 end

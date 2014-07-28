@@ -1,23 +1,23 @@
-require_relative 'helpers'
 #draw a parallax background i.e move the background image as player moves.
 class ParallaxBackground
+    class << self
+        def initialize
+            #pixel ratio of image to window.
+            map_width = (Map::width + 15) * 50
+            map_height = (Map::height + 10) * 50
+            @w_ratio = Float(GameImages::gameBackground.width) / map_width
+            @h_ratio = Float(GameImages::gameBackground.height) / map_height
 
-  def initialize(window, filename, map_width, map_height)
-    @image = Image.new(window, filename, true)
+            @x, @y = 0, 0
+        end
 
-    #pixel ratio of image to window.
-    @w_ratio = Float(@image.width) / map_width
-    @h_ratio = Float(@image.height) / map_height
+        def draw
+            GameImages::gameBackground.draw(@x, @y, ZOrder::Background) 
+        end
 
-    @x, @y = 0, 0
-  end
-
-  def draw
-    @image.draw(@x, @y, ZOrder::Background) 
-  end
-
-  def update(camera_x, camera_y)
-    @x = -camera_x * @w_ratio
-    @y = -camera_y * @h_ratio
-  end
+        def update
+            @x = -ScrollingCamera::camera_x * @w_ratio
+            @y = -ScrollingCamera::camera_y * @h_ratio
+        end
+    end
 end

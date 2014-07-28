@@ -2,13 +2,12 @@ class Arrow
 
 	X_DIST = 25 # 50 pixels of oscillation
 
-	def initialize(window, offset_x)
-		@image = Image.new(window, 'media/arrow.png', true)
+	def initialize(offset_x)
 		@offset_x = offset_x
 	end
 
 	def draw
-		@image.draw(@x, @y, ZOrder::UI)
+		GameImages::arrowImage.draw(@x, @y, ZOrder::UI)
 	end
 
 	def set(x, y)

@@ -1,12 +1,14 @@
 require_relative 'Collider'
 
 class PlayerDiamondCollider < Collider
-	def initialize(player)
-		super [player], Diamond::getDiamondList
-	end
+	class << self
+		def initialize
+			super [PlayerHandler::playerObj], DiamondHandler::diamondList
+		end
 
-	def action(obj1, obj2, offset_x, offset_y)
-		Diamond::getDiamondList.delete(obj2)
-		obj1.score += 1
+		def action(obj1, obj2, offset_x, offset_y)
+			DiamondHandler::diamondList.delete(obj2)
+			ScoreBoard::increment
+		end
 	end
 end

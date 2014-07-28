@@ -12,3 +12,5 @@
 
 -- difference between require and include.
 -- game pad support
+
+-- bug in offsets for sprites.

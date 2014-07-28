@@ -2,12 +2,6 @@ class Collidable
 
 	attr_reader :x, :y, :width, :height, :dir
 
-	@@map = nil
-
-	def self.setMap(map)
-		@@map = map
-	end
-
 	def initialize(x, y, width, height, dir)
 		@x = x
 		@y = y
@@ -17,39 +11,39 @@ class Collidable
 		@cur_image = nil
 	end
 
-	def brickTouchUp?(newx, newy)
+	def broadTouchUp?(newx, newy)
 
-   		@@map.solid?(newx - @width / 2, newy - @height / 2) \
+   		Map::solid?(newx - @width / 2, newy - @height / 2) \
    				or 
-   			@@map.solid?(newx + @width / 2, newy - @height / 2)
+   			Map::solid?(newx + @width / 2, newy - @height / 2)
   	end
 
-	def brickTouchDown?(newx, newy)
+	def broadTouchDown?(newx, newy)
 
-		@@map.solid?(newx - @width / 2, newy) \
+		Map::solid?(newx - @width / 2, newy + @height / 2) \
 				or 
-			@@map.solid?(newx + @width / 2, newy)
+			Map::solid?(newx + @width / 2, newy + @height / 2)
 	end
 
-	def brickTouchLeft?(newx, newy)
+	def broadTouchLeft?(newx, newy)
 
-		@@map.solid?(newx - @width / 2, newy) \
+		Map::solid?(newx - @width / 2, newy - @height / 2) \
 				or 
-			@@map.solid?(newx - @width / 2, newy + @height)
+			Map::solid?(newx - @width / 2, newy + @height / 2)
 	end
 
-	def brickTouchRight?(newx, newy)
+	def broadTouchRight?(newx, newy)
 
-		@@map.solid?(newx + @width / 2, newy) \
+		Map::solid?(newx + @width / 2, newy - @height / 2) \
 				or 
-			@@map.solid?(newx + @width / 2, newy + @height)
+			Map::solid?(newx + @width / 2, newy + @height / 2)
 	end
 
-	# define the line touch methods.
+	# define the broad line touch methods.
 	[["Up", 0, -1], ["Down", 0, 1], ["Left", -1, 0], ["Right", 1, 0]].each do |dir, off_x, off_y|
-		define_method("lineTouch#{dir}?") do |dist|
+		define_method("broadLineTouch#{dir}?") do |dist|
 
-			chk_func = method("brickTouch#{dir}?")
+			chk_func = method("broadTouch#{dir}?")
 			dist.times do
 				if chk_func.call(@x + off_x, @y + off_y) 
 					return true 
@@ -62,6 +56,46 @@ class Collidable
 
 		end
 	end  
+
+	def narrowTouchUp?(newx, newy)
+   		Map::solid?(newx, newy - @height / 2) 
+  	end
+
+	def narrowTouchDown?(newx, newy)
+		Map::solid?(newx, newy + @height / 2) 
+	end
+
+	def narrowTouchLeft?(newx, newy)
+		Map::solid?(newx - @width / 2, newy) 
+	end
+
+	def narrowTouchRight?(newx, newy)
+		Map::solid?(newx + @width / 2, newy)
+	end
+
+	# define the narrow line touch methods.
+	[["Up", 0, -1], ["Down", 0, 1], ["Left", -1, 0], ["Right", 1, 0]].each do |dir, off_x, off_y|
+		define_method("narrowLineTouch#{dir}?") do |dist|
+
+			chk_func = method("narrowTouch#{dir}?")
+			dist.times do
+				if chk_func.call(@x + off_x, @y + off_y) 
+					return true 
+				else 
+					@x += off_x
+					@y += off_y  
+				end
+			end
+			false
+
+		end
+	end
+
+    def leftRightMove(vel)
+        (@dir == :right and narrowLineTouchRight? vel) \
+        		or
+        	(@dir == :left and narrowLineTouchLeft? vel)
+    end
 
 	def draw
 	    # Flip vertically when facing to the left.
@@ -82,18 +116,24 @@ class Collidable
   	def getCollideOffset(obj)
 		off_x, off_y = 0, 0
 
-		if @x + @width > obj.x and @y + @height > obj.y and @x < obj.x + obj.width and @y < obj.y + obj.height then
+		x1 = @x - @width / 2
+		y1 = @y - @height / 2
 
-			off_x = if @x < obj.x then
-						@x + @width - obj.x
+		x2 = obj.x - obj.width / 2
+		y2 = obj.y - obj.height / 2
+
+		if x1 + @width > x2 and y1 + @height > y2 and x1 < x2 + obj.width and y1 < y2 + obj.height then
+
+			off_x = if x1 < x2 then
+						x1 + @width - x2
 					else 
-						@x - obj.x - obj.width
+						x1 - x2 - obj.width
 					end
 					
-			off_y = if @y < obj.y then
-						@y + @height - obj.y
+			off_y = if y1 < y2 then
+						y1 + @height - y2
 					else 
-						@y - obj.y - obj.height
+						y1 - y2 - obj.height
 					end
 		end
 
