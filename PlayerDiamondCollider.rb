@@ -9,6 +9,7 @@ class PlayerDiamondCollider < Collider
 		def action(obj1, obj2, offset_x, offset_y)
 			DiamondHandler::diamondList.delete(obj2)
 			ScoreBoard::increment
+			GameSounds::gem_ping.play
 		end
 	end
 end

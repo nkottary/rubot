@@ -1,16 +1,21 @@
 -- add menu
-	-- quit in pause takes to menu.
-	-- start game.
+	-- Highscores.
 	-- change controls.
-	-- quit.
--- add sound.
-	-- looped background music.
--- add levels.
 -- add powerups.
--- add kill enemy by pouncing and health.
 -- add graphics objects like trees and buildings.
 
--- difference between require and include.
 -- game pad support
 
--- bug in offsets for sprites.
+-- Ask for name if score within top highscores at end of game.
+-- immune state blend red.
+-- make health bar.
+-- adjust sound volumes.
+-- add player dead.
+
+done stuff:
+-- added sound and fonts
+-- added player and orc health.
+-- fixed collision bug.
+-- added orc explosion on death.
+-- benchmarked map.draw.
+-- added health power up.

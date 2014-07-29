@@ -31,12 +31,14 @@ class Menu
 		@selectedOption += 1
 		@selectedOption = 0 if @selectedOption >= @numOptions
 		@arrow.set(OPTION_X, getOptionY(@selectedOption))
+		GameSounds::option_sound.play
 	end
 
 	def previousOption
 		@selectedOption -= 1
 		@selectedOption = @numOptions - 1 if @selectedOption < 0
 		@arrow.set(OPTION_X, getOptionY(@selectedOption))
+		GameSounds::option_sound.play
 	end
 
 	def doAction
@@ -72,5 +74,6 @@ class Menu
 
 	def do_i_th_action(i)
 		@actions[i].call if @actions[i]
+		GameSounds::select_sound.play
 	end
 end

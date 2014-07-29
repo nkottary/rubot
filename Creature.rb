@@ -3,11 +3,16 @@ require_relative "Collidable"
 class Creature < Collidable
     attr_reader :x, :y
 
-    def initialize(x, y, width, height)
+    def initialize(x, y, width, height, health)
         super x, y, width, height, :right # width and height 50 50
 
         @curr_yvel = 0
         @vert_state = :standing
+        @health = health
+    end
+
+    def is_alive?
+        @health > 0
     end
 
     protected

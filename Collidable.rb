@@ -15,28 +15,36 @@ class Collidable
 
    		Map::solid?(newx - @width / 2, newy - @height / 2) \
    				or 
-   			Map::solid?(newx + @width / 2, newy - @height / 2)
+   			Map::solid?(newx + @width / 2, newy - @height / 2) \
+   					or
+   				narrowTouchUp?(newx, newy)
   	end
 
 	def broadTouchDown?(newx, newy)
 
 		Map::solid?(newx - @width / 2, newy + @height / 2) \
 				or 
-			Map::solid?(newx + @width / 2, newy + @height / 2)
+			Map::solid?(newx + @width / 2, newy + @height / 2) \
+					or
+   				narrowTouchDown?(newx, newy)
 	end
 
 	def broadTouchLeft?(newx, newy)
 
 		Map::solid?(newx - @width / 2, newy - @height / 2) \
 				or 
-			Map::solid?(newx - @width / 2, newy + @height / 2)
+			Map::solid?(newx - @width / 2, newy + @height / 2) \
+					or
+   				narrowTouchLeft?(newx, newy)
 	end
 
 	def broadTouchRight?(newx, newy)
 
 		Map::solid?(newx + @width / 2, newy - @height / 2) \
 				or 
-			Map::solid?(newx + @width / 2, newy + @height / 2)
+			Map::solid?(newx + @width / 2, newy + @height / 2) \
+					or
+   				narrowTouchRight?(newx, newy)
 	end
 
 	# define the broad line touch methods.

@@ -3,15 +3,17 @@ class Map
     class << self
         attr_reader :width, :height
 
+        TILE_WIDTH, TILE_HEIGHT = 50, 50
+
         def initialize(filename)
             # Load 60x60 tiles, 5px overlap in all four directions.
             lines = File.readlines(filename).map { |line| line.chomp }
             @height = lines.size
             @width = lines[0].size
             @tiles = Array.new(@width) do |x|
-                xpos = x * 50 + 25
+                xpos = x * TILE_WIDTH + 25
                 Array.new(@height) do |y|
-                    ypos = y * 50 + 25
+                    ypos = y * TILE_HEIGHT + 25
                     case lines[y][x, 1]
                     when '"'
                         Tiles::Grass
@@ -26,6 +28,9 @@ class Map
                     when 'b'
                         BotHandler::spawn xpos, ypos
                         nil
+                    when 'h'
+                        HealthPowerupHandler::spawn xpos, ypos
+                        nil
                     end
                 end
             end
@@ -37,8 +42,8 @@ class Map
             @height.times do |y|
                 @width.times do |x|
                     tile = @tiles[x][y]
-                    x1 = x * 50
-                    y1 = y * 50
+                    x1 = x * TILE_WIDTH
+                    y1 = y * TILE_HEIGHT
                     if tile and inScreen? x1, y1
                         # Draw the tile with an offset (tile images have some overlap)
                         # Scrolling is implemented here just as in the game objects.
@@ -50,7 +55,7 @@ class Map
         
         # Solid at a given pixel position?
         def solid?(x, y)
-            y < 0 || @tiles[x / 50][y / 50]
+            y < 0 || @tiles[x / TILE_WIDTH][y / TILE_HEIGHT]
         end
 
         private
@@ -60,18 +65,18 @@ class Map
             x2 = ScrollingCamera::camera_x
             y2 = ScrollingCamera::camera_y
 
-            if x1 + 50 > x2 and y1 + 50 > y2 and x1 < x2 + 640 and y1 < y2 + 480 then
+            if x1 + TILE_WIDTH > x2 and y1 + TILE_HEIGHT > y2 and x1 < x2 + WINDOW_WIDTH and y1 < y2 + WINDOW_HEIGHT then
 
                 off_x = if x1 < x2 then
-                            x1 + 50 - x2
+                            x1 + TILE_WIDTH - x2
                         else 
-                            x1 - x2 - 640
+                            x1 - x2 - WINDOW_WIDTH
                         end
                         
                 off_y = if y1 < y2 then
-                            y1 + 50 - y2
+                            y1 + TILE_HEIGHT - y2
                         else 
-                            y1 - y2 - 480
+                            y1 - y2 - WINDOW_HEIGHT
                         end
             end
 

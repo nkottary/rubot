@@ -7,7 +7,7 @@ class PlayerHandler
         end
 
         def draw
-            @playerObj.draw
+            @playerObj.draw 
         end
 
         def update
@@ -30,6 +30,7 @@ class PlayerHandler
                     @playerObj.move_left
                 when Gosu::KbUp
                     @playerObj.jump
+                    GameSounds::jump_sound.play
             end
         end
     end
@@ -43,8 +44,14 @@ class PlayerHandler
         WIDTH = 64
         HEIGHT = 40
 
+        MAX_HEALTH = 100
+        NUM_LIVES = 3
+        IMMUNE_TIME = 100 # after being damaged player remains immune for this much time
+
+        attr_reader :health
+
         def initialize(x, y)
-            super x, y, WIDTH, HEIGHT
+            super x, y, WIDTH, HEIGHT, MAX_HEALTH
 
             imgs = GameImages::playerImages
 
@@ -55,14 +62,36 @@ class PlayerHandler
             @@jump_n_move = imgs[5]
 
             @move_state = :standing
+            @walk_sound = nil
+
+            @elapsed_imm_time = 0
+            @lives = 3
+        end
+
+        def damage(amount)
+            if @elapsed_imm_time == 0
+                @health -= amount 
+                @elapsed_imm_time = IMMUNE_TIME
+                GameSounds::rubot_ouch.play
+            end
+        end
+
+        def heal(amount)
+            @health += @health + amount
+            @health = MAX_HEALTH if @health > MAX_HEALTH
         end
 
         def update
             if @move_state == :moving then
                 leftRightMove MOVE_VEL
+                if @walk_sound == nil or not @walk_sound.playing?
+                    @walk_sound = GameSounds::walking_sound.play
+                end
             end
             moveVertically
             pickImage
+
+            @elapsed_imm_time -= 1 if @elapsed_imm_time != 0
         end
         
         def jump
@@ -115,7 +144,7 @@ class PlayerHandler
         end
 
         def handleJumping
-            if @curr_yvel == 0 or broadLineTouchUp?(@curr_yvel) 
+            if @curr_yvel == 0 or narrowLineTouchUp?(@curr_yvel) 
                 @curr_yvel = 0 
                 @vert_state = :falling
             else

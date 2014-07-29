@@ -1,5 +1,6 @@
 class FireballHandler
 	class << self
+		attr_reader :fireballList
 		def initialize
 			@fireballList = []
 		end
@@ -38,7 +39,10 @@ class FireballHandler
 		end
 
 		def moveHorizontally
-			@is_alive = false if leftRightMove VEL_X
+			if leftRightMove VEL_X
+				@is_alive = false 
+				GameSounds::fireball_bump.play
+			end
 		end
 
 		def moveVertically

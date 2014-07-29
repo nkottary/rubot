@@ -1,7 +1,3 @@
-
-#  8) optimize Map#draw so only tiles on screen are drawn (needs modulo, a pen
-#     and paper to figure out)
-
 require 'gosu'
 require_relative 'helpers'
 require_relative 'GameManager'
@@ -24,16 +20,20 @@ class MainGameHandler
     class GameWindow < Gosu::Window
 
         def initialize
-            super(640, 480, false)
+            super(WINDOW_WIDTH, WINDOW_HEIGHT, false)
             self.caption = "Rubot"
             
             FontLibrary::load self
             GameImages::load self
+            GameMusic::load self
+            GameSounds::load self
 
             @windowState = :menu
 
             GameManager::initialize method(:quitGame)
             MenuHandler::initialize method(:startNewGame), method(:close)
+
+            GameMusic::menu_music.play true
         end
 
         def update
@@ -48,10 +48,12 @@ class MainGameHandler
         def startNewGame
             GameManager::startNewGame
             @windowState = :game 
+            GameMusic::in_game_music.play true
         end
 
         def quitGame
             @windowState = :menu
+            GameMusic::menu_music.play true
         end
 
         def draw

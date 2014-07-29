@@ -2,6 +2,7 @@ require_relative "Creature"
 
 class BotHandler
     class << self
+        attr_reader :botList
         def initialize
             @botList = []        
         end
@@ -11,8 +12,13 @@ class BotHandler
         end
 
         def update
-            @botList.each do |bot|
-              bot.update
+            @botList.reject! do |bot|
+                bot.update
+                if not bot.is_alive?
+                    ExplosionHandler::spawn bot.x, bot.y
+                    GameSounds::explosion_sound.play
+                    true
+                end
             end
         end
 
@@ -30,17 +36,24 @@ class BotHandler
         WIDTH = 60
         HEIGHT = 60
         VEL_X = 2
+        MAX_HEALTH = 5
 
         def initialize(x, y)
-            super x, y, WIDTH, HEIGHT
+            super x, y, WIDTH, HEIGHT, MAX_HEALTH
             @vert_state = :standing
             @curr_yvel = 0
+            @health = MAX_HEALTH
         end
 
         def update
             @cur_image = GameImages::orc_run_imgs[Gosu::milliseconds / 100 % 8]
             moveHorizontally
             moveVertically
+        end
+
+        def damage(amount)
+            @health -= amount if is_alive?
+            GameSounds::orc_ouch.play
         end
 
         private

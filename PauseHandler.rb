@@ -47,6 +47,7 @@ class PauseHandler
 				@selectedOption = :yes
 				@arrow.set YES_X, YES_Y
 			end
+			GameSounds::option_sound.play
 		end
 
 		def doAction
@@ -55,6 +56,7 @@ class PauseHandler
 			else
 				@onNo.call
 			end
+			GameSounds::select_sound.play
 		end
 	end
 end
