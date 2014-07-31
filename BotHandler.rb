@@ -16,7 +16,6 @@ class BotHandler
                 bot.update
                 if not bot.is_alive?
                     ExplosionHandler::spawn bot.x, bot.y
-                    GameSounds::explosion_sound.play
                     true
                 end
             end

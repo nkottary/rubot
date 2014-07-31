@@ -7,7 +7,7 @@ class PlayerEnemyCollider < Collider
 		end
 
 		def action(obj1, obj2, offset_x, offset_y)
-			PlayerHandler::playerObj.damage(10)
+			PlayerHandler::playerObj.damage(30)
 		end
 	end
 end

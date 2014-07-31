@@ -9,6 +9,7 @@ class ExplosionHandler
 
 		def spawn(x, y)
 			@explosionList << Explosion.new(x, y)
+			GameSounds::explosion_sound.play
 		end
 
 		def update

@@ -31,7 +31,9 @@ class GameImages
 		end
 =end
 		attr_reader :menuBackground, :gameBackground, :arrowImage, :tileset, :fireballImage, :diamondImage
-		attr_reader :playerImages, :orc_run_imgs, :explosionImages, :healthPowerupImage
+		attr_reader :orc_run_imgs, :explosionImages, :healthPowerupImage
+		attr_reader :player_stand_image, :player_img_run, :player_going_up_image
+		attr_reader :player_going_down_image, :player_jump_n_move
 
 		def load(window)
 			@menuBackground = Gosu::Image.new(window, 'media/menu-bg.jpg', true)
@@ -40,7 +42,14 @@ class GameImages
 			@tileset = Gosu::Image.load_tiles(window, "media/CptnRuby Tileset.png", 60, 60, true)
 			@fireballImage = Gosu::Image.new(window, 'media/fireball.png', false)
 			@diamondImage = Gosu::Image.new(window, 'media/gem.png', false)
-			@playerImages = Gosu::Image.load_tiles(window, "media/hero.png", 64, 64, false)
+
+			imgs = Gosu::Image.load_tiles(window, "media/hero.png", 64, 64, false)
+			@player_stand_image = imgs[0]
+            @player_img_run = [imgs[2], imgs[3], imgs[2], imgs[1]]
+            @player_going_up_image = imgs[10]
+            @player_going_down_image = imgs[11]
+            @player_jump_n_move = imgs[5]
+
 			@explosionImages = Gosu::Image.load_tiles(window, "media/Explosion.png", 96, 96, false)
 			@healthPowerupImage = Gosu::Image.new(window, 'media/health.png', false)
 

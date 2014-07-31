@@ -6,11 +6,7 @@ require_relative "DiamondHandler"
 require_relative "ExplosionHandler"
 require_relative "HealthPowerupHandler"
 require_relative "PlayerHandler"
-
-require_relative "PlayerDiamondCollider"
-require_relative "PlayerEnemyCollider"
-require_relative "FireballEnemyCollider"
-require_relative "PlayerHealthPowerupCollider"
+require_relative "CollisionHandler"
 require_relative "ScoreBoard"
 require_relative "Map"
 
@@ -26,11 +22,10 @@ class Game
             ScoreBoard::initialize
 
             Map::initialize mapFile
-            PlayerDiamondCollider::initialize
-            PlayerEnemyCollider::initialize
-            FireballEnemyCollider::initialize
-            PlayerHealthPowerupCollider::initialize
+            CollisionHandler::initialize
             ParallaxBackground::initialize
+
+            @waiting = 0
     	end
 
     	def draw
@@ -52,17 +47,27 @@ class Game
     	def update
             ParallaxBackground::update
             ScrollingCamera::update
-            PlayerHandler::update
             BotHandler::update
             FireballHandler::update
             DiamondHandler::update
             ExplosionHandler::update
             HealthPowerupHandler::update
 
-            PlayerDiamondCollider::update
-            PlayerEnemyCollider::update
-            FireballEnemyCollider::update
-            PlayerHealthPowerupCollider::update
+            CollisionHandler::update
+
+            if PlayerHandler::playerObj.is_alive?
+                PlayerHandler::update
+            else
+                if @waiting == 0
+                    ExplosionHandler::spawn(PlayerHandler::playerObj.x, PlayerHandler.playerObj.y)
+                    @waiting += 1
+                elsif @waiting == 100
+                    PlayerHandler::reincarnate
+                    @waiting = 0
+                else
+                    @waiting += 1
+                end
+            end
 =begin
             if game_over_shown_flag and not @playerObj.is_alive?
                 GameSounds::explosion_sound.play
@@ -77,6 +82,7 @@ class Game
         end
 
         def button_down(id)
+            return if not PlayerHandler::playerObj.is_alive?
             if id == Gosu::KbSpace
                 FireballHandler::spawn PlayerHandler::playerObj.x, PlayerHandler::playerObj.y, PlayerHandler::playerObj.dir
                 GameSounds::shoot_sound.play

@@ -107,6 +107,8 @@ class Collidable
 
 	def draw
 	    # Flip vertically when facing to the left.
+	    return if not @cur_image
+
 	    if @dir == :left then
 	     	offs_x = @width / 2
 	     	factor = -1.0
@@ -118,7 +120,7 @@ class Collidable
 	    x = @x + offs_x
 	    y = @y - @height + 1
 
-	    if @cur_image then @cur_image.draw(x, y, ZOrder::Creature, factor, 1.0) end
+	    @cur_image.draw(x, y, ZOrder::Creature, factor, 1.0)
   	end
 
   	def getCollideOffset(obj)
