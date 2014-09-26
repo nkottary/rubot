@@ -8,14 +8,5 @@
 
 -- Ask for name if score within top highscores at end of game.
 -- immune state blend red.
--- make health bar.
 -- adjust sound volumes.
 -- add player dead.
-
-done stuff:
--- added sound and fonts
--- added player and orc health.
--- fixed collision bug.
--- added orc explosion on death.
--- benchmarked map.draw.
--- added health power up.
